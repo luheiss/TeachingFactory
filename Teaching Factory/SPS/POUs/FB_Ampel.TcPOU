@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="FB_Ampel" Id="{d9081e82-d3cf-4285-9890-cb1a91f12aff}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Ampel
+VAR_INPUT
+	eState : BOOL;
+END_VAR
+VAR_OUTPUT
+	bAmpelGruen : BOOL;
+	bAmpelRot : BOOL;
+	bAmpelGelb : BOOL;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Ampel">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

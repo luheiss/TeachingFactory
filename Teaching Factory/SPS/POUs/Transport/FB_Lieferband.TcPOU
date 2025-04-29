@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="FB_Lieferband" Id="{58061866-c1c0-4ff5-bd5a-22cf4387c576}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Lieferband
+VAR_INPUT
+	//Steuereingänge
+	bEnable : BOOL;
+	bExecute : BOOL;
+	bHalt : BOOL;
+END_VAR
+VAR_OUTPUT
+	eState : eBetriebszustand;
+END_VAR
+VAR
+	nState : INT := 0;
+	rVelocity : REAL;
+	rAcceleration : REAL;
+	// Motion Blöcke der Tc2_Mc2
+	mcReset : MC_Reset;
+	mcPower : MC_Power;
+	mcVelocity : MC_MoveVelocity;
+	mcHalt : MC_Halt;
+END_VAR
+
+VAR_IN_OUT
+	ax : Axis_Ref;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[ax.ReadStatus(); //Aktualisierung der Position für das Förderband in der Teaching Factory 
+//Ausschreiben des Funktionsbausteines 
+mcReset(
+	Axis:= ax,  
+	Execute:= , 
+	Done=> , 
+	Busy=> , 
+	Error=> , 
+	ErrorID=> );
+	
+mcPower(
+	Axis:= ax, //Weitere Parameter über Punkt-Notation 
+	Enable:= , 
+	Enable_Positive:= , 
+	Enable_Negative:= , 
+	Override:= , 
+	BufferMode:= , 
+	Options:= , 
+	Status=> , 
+	Busy=> , 
+	Error=> , 
+	ErrorID=> );
+
+mcVelocity(
+	Axis:= ax, 
+	Execute:= , 
+	Velocity:= , 
+	Acceleration:= , 
+	Deceleration:= , 
+	Jerk:= , 
+	Direction:= MC_Positive_Direction, 
+	BufferMode:= , 
+	Options:= , 
+	InVelocity=> , 
+	Busy=> , 
+	Active=> , 
+	CommandAborted=> , 
+	Error=> , 
+	ErrorID=> );
+
+mcHalt(
+	Axis:= ax, 
+	Execute:= , 
+	Deceleration:= 60, 
+	Jerk:= , 
+	BufferMode:= , 
+	Options:= , 
+	Done=> , 
+	Busy=> , 
+	Active=> , 
+	CommandAborted=> , 
+	Error=> , 
+	ErrorID=> );
+	
+//Zustandsdiagramm nach Unterricht
+
+IF NOT mcPower.Status THEN
+	nState := 0;
+END_IF
+
+CASE nState OF
+	0: 
+		eState := eBetriebszustand.Off;
+		mcPower.Enable := TRUE;
+		mcPower.Enable_Positive := TRUE;
+		
+		IF mcPower.Status AND bEnable THEN
+			nState := 20;
+		ELSIF bEnable AND NOT mcPower.Status THEN
+			nState := 10;
+		END_IF
+	
+	10:
+		eState := eBetriebszustand.Init;
+		mcReset.Execute := TRUE;
+		mcPower.Enable := FALSE;
+		IF mcReset.Done THEN
+			nState := 11;
+		END_IF
+	
+	11:
+		eState := eBetriebszustand.Init;
+		mcPower.Enable := TRUE;
+		mcReset.Execute := FALSE;
+		IF mcPower.Status THEN
+			nState := 20;
+		END_IF
+		
+	20:
+		eState := eBetriebszustand.Ready;
+		IF bExecute THEN
+			nState := 30;		
+		END_IF
+	
+	30:
+		eState := eBetriebszustand.Production;
+		mcVelocity.Execute := TRUE;
+		mcVelocity.Velocity := 30;
+		mcVelocity.Acceleration := 60;
+		IF bHalt THEN
+			nState := 31;
+		END_IF
+	
+	31:
+		eState := eBetriebszustand.Production;
+		mcVelocity.Execute := FALSE;
+		mcHalt.Execute := TRUE;
+		mcHalt.Deceleration := 60;
+		IF mcHalt.Done THEN
+			nState := 40;
+		END_IF
+	
+	40:
+		eState := eBetriebszustand.Done;
+		mcHalt.Execute := FALSE;
+		IF NOT bExecute THEN
+			nState := 20;
+		END_IF
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Lieferband">
+      <LineId Id="195" Count="116" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="312" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

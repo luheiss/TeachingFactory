@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="FB_Vereinzelung" Id="{8df8cb51-b677-413b-a20d-f0c4d973ea03}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Vereinzelung
+VAR_INPUT
+	//Steuervariablen
+	bEnable : BOOL;
+	bExecute : BOOL;
+	//Hardware Eingänge
+	bSensor1 : BOOL; //Flasche in der Kammer
+	bSensor2 : BOOL; //Flasche im Rohr
+	bSensor3 : BOOL; //Flasche auf Kopf
+	bSensor4 : BOOL; //Flasche am Förderband
+END_VAR
+VAR_OUTPUT
+	//Hardware Ausgänge
+	bGate1: BOOL;
+	bGate2: BOOL;
+	eState: eBetriebszustand;	
+END_VAR
+VAR
+	nState: INT := 100;
+
+	fbTon: Ton;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbTon(IN:= , PT:= T#1S, Q=> , ET=> );
+
+CASE nState OF
+	100:
+	eState := eBetriebszustand.Off;
+	
+	IF bSensor1 AND bEnable THEN
+		nState := 21; //Ready
+	ELSIF bEnable THEN
+		nState := 0; //Init
+	END_IF
+	
+	0: //Kammer ist leer
+	eState := eBetriebszustand.Init;
+	bGate1 := FALSE;
+	bGate2 := FALSE;
+	
+	IF bSensor2 THEN
+		nState := 1; //Oben öffnen
+	END_IF
+	
+	1: //Oben öffnen
+	eState := eBetriebszustand.Init;
+	bGate1 := TRUE;
+	bGate2 := FALSE;
+	
+	IF bSensor1 THEN
+		nState := 2; //oben schließen
+	END_IF
+	
+	2: //oben schließen
+	
+	eState := eBetriebszustand.Init;
+	bGate1 := FALSE;
+	bGate2 := FALSE;
+	fbTon.IN := TRUE;
+	
+	IF bSensor1 THEN
+		nState := 21; //Ready
+		fbTon.IN := FALSE;
+	END_IF
+	
+	21: //Ready
+	eState := eBetriebszustand.Ready;
+	bGate1 := FALSE;
+	bGate2 := FALSE;
+	fbTon.IN := TRUE;
+	
+	IF bExecute THEN
+		nState := 3;
+	END_IF
+	
+	3:	//unten öffen
+	eState := eBetriebszustand.Production;
+		bGate1 := FALSE;
+		bGate2 := TRUE;
+		IF bSensor4 THEN
+			nState := 4;
+		END_IF
+	
+	4:	//unten schließen
+		eState := eBetriebszustand.Production;
+		bGate1 := FALSE;
+		bGate2 := FALSE;
+		IF fbTon.Q THEN
+			nState := 41;
+		END_IF
+	
+	41:	//Ablauf fertig
+	eState := eBetriebszustand.Done;
+		IF NOT bExecute THEN
+			nState := 0;
+		END_IF
+	
+	
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Vereinzelung">
+      <LineId Id="81" Count="74" />
+      <LineId Id="23" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

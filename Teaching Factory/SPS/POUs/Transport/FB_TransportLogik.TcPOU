@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="FB_TransportLogik" Id="{024fb3a1-fd5b-4664-9520-3d063823ae19}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_TransportLogik
+VAR_INPUT
+	bEnable : BOOL;
+	bExecute : BOOL;
+	eStateE : eBetriebszustand;
+	nStation : INT;
+	// Logik -> Hardware Signal
+	bStation1 : BOOL;
+	bStation2 : BOOL;
+	bStation3 : BOOL;
+	bStation4 : BOOL;
+END_VAR
+VAR_OUTPUT
+	bEnableA : BOOL;
+	bExecuteA : BOOL;
+	bStopA : BOOL;
+	eStateA: eBetriebszustand;
+	bStop1 : BOOL;
+	bStop2 : BOOL;
+	bStop3 : BOOL;
+END_VAR
+VAR
+	nState : INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <LineIds Name="FB_TransportLogik">
+      <LineId Id="29" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

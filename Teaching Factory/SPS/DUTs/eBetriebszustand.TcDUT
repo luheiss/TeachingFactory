@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <DUT Name="eBetriebszustand" Id="{9d7ace98-9ea4-43ec-8e44-d2a6d2cebdf6}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE eBetriebszustand :
+(
+	Off , // nicht Betriebsbereit
+	Error , //Fehlerbehafteter Stop, Rot leuchtend
+	Setup , //Wartung
+	Warning , //Bicht Fehlerbehafteter, zb. man hat keine Flaschen mehr
+	Init , //Herstellung Betriebsbereitschaft
+	Ready , //Betriebsbereit
+	Production , //Betrieb
+	Done , //Betrieb abgeschlossen, Grün leuchtend
+	Stop //geplanter Stop
+	
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

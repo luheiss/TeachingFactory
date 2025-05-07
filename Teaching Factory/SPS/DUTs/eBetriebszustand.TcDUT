@@ -5,16 +5,15 @@
 {attribute 'strict'}
 TYPE eBetriebszustand :
 (
-	Off , // nicht Betriebsbereit
-	Error , //Fehlerbehafteter Stop, Rot leuchtend
-	Setup , //Wartung
-	Warning , //Bicht Fehlerbehafteter, zb. man hat keine Flaschen mehr
-	Init , //Herstellung Betriebsbereitschaft
-	Ready , //Betriebsbereit
-	Production , //Betrieb
-	Done , //Betrieb abgeschlossen, Grün leuchtend
-	Stop //geplanter Stop
-	
+	Off,		//nicht Betriebsbereit						nichts
+	Error,		//Fehlerbehafteter Stopp					Gelb -> Blinkt
+	Setup,		//Wartung									Rot, Gelb, Grün -> leuchtet
+	Warning,	//Nicht Fehlerbehafteter Stopp				Rot -> Blinkt
+	Init,		//herstellung Betriebsbereitschaft			Gelb -> leuchtet
+	Ready,		//Betriebsbereit							Grün und Gelb -> Blinkt
+	Production,	//Betrieb									Grün -> leuchtet
+	Done,		//Betrieb abgeschlossen						Grün -> Blinkt
+	Stop		//geplanter Stop							Yellow -> leuchtet
 );
 END_TYPE
 ]]></Declaration>

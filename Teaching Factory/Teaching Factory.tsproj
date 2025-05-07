@@ -1426,7 +1426,7 @@ External Setpoint Generation:
 	</DataTypes>
 	<Project ProjectGUID="{E12BCBEE-A4A9-40F1-8B2B-A70C74382FE8}" Target64Bit="true" ShowHideConfigurations="#x6">
 		<System>
-			<Settings MaxCpus="16" NonWinCpus="4">
+			<Settings MaxCpus="16">
 				<Cpu CpuId="12"/>
 				<Cpu CpuId="13"/>
 				<Cpu CpuId="14"/>
@@ -1613,7 +1613,7 @@ External Setpoint Generation:
 		</Motion>
 		<Plc>
 			<Project GUID="{17F27903-AC3B-472A-8921-87EA7277D84A}" Name="SPS" PrjFilePath="SPS\SPS.plcproj" TmcFilePath="SPS\SPS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="SPS\SPS.tmc" TmcHash="{01FDC3DB-831F-DFEA-EBA4-4F808E2EB630}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="SPS\SPS.tmc" TmcHash="{1DB21AC0-C37F-D296-0885-82807FC7703B}">
 					<Name>SPS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="1">

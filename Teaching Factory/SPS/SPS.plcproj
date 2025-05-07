@@ -27,7 +27,10 @@
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\FB_Ampel.TcPOU">
+    <Compile Include="POUs\Ampel\FB_Ampel.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\Ampel\FB_Blinken_Ampel.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\FB_EZylinder.TcPOU">
@@ -58,6 +61,7 @@
   <ItemGroup>
     <Folder Include="DUTs" />
     <Folder Include="GVLs" />
+    <Folder Include="POUs\Ampel" />
     <Folder Include="POUs\Transport" />
     <Folder Include="VISUs" />
     <Folder Include="POUs" />

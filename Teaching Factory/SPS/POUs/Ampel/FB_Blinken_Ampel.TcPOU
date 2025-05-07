@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="FB_Blinken_Ampel" Id="{7c371093-a381-4e7c-928f-e6a4df91eda3}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Blinken_Ampel
+VAR_INPUT
+	tPeriode  : TIME := T#1S;   // Gesamtperiode des Blinkens
+END_VAR
+VAR_OUTPUT
+	bBlink : BOOL := FALSE;     // Ausgang: Blinkt true/false
+END_VAR
+VAR
+	fbTon : TON;                // Einschalt-Timer
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Timer läuft dauerhaft
+fbTon(IN := TRUE, PT := tPeriode);
+
+// Blink-Logik: 50/50 Duty Cycle
+IF fbTon.ET < tPeriode / 2 THEN
+	bBlink := TRUE;
+ELSE
+	bBlink := FALSE;
+END_IF
+
+// Timer neu starten, wenn abgelaufen
+IF fbTon.Q THEN
+	fbTon(IN := FALSE);  // kurzer Reset
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Blinken_Ampel">
+      <LineId Id="19" Count="12" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

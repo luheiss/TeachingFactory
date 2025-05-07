@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="FB_Ampel" Id="{d9081e82-d3cf-4285-9890-cb1a91f12aff}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Ampel
+VAR_INPUT
+	eState : eBetriebszustand;
+END_VAR
+
+VAR_OUTPUT
+	bRed : BOOL := FALSE;
+	bYellow : BOOL := FALSE;
+	bGreen : BOOL := FALSE;
+END_VAR
+
+VAR
+	nState : INT := 0;
+	fbTon : Ton;
+	fbBlink : FB_Blinken_Ampel;
+	bBlinken: BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CASE nState OF
+	
+	//Off -> nicht Betriebsbereit
+	0: 
+		IF eState = eBetriebszustand.Init THEN
+			nState := 10;
+		END_IF
+		
+	//Init -> herstellung Betriebsbereitschaft
+	10: 
+		bYellow := TRUE;
+		IF eState = eBetriebszustand.Ready THEN
+			bYellow := FALSE;
+			nState := 20;
+		END_IF
+	
+	//Ready -> Betriebsbereit
+	20:
+		fbBlink(tPeriode:= T#1S , bBlink=> bBlinken);
+		bGreen := bBlinken;
+		bYellow := bBlinken;
+		
+		IF eState = eBetriebszustand.Production THEN
+			bGreen := FALSE;
+			bYellow := FALSE;
+			nState := 30;
+		END_IF
+	
+	//Production -> Betrieb	
+	30: 
+		bGreen := TRUE;
+		IF eState = eBetriebszustand.Done THEN
+			bGreen := FALSE;
+			nState := 40;
+		END_IF
+		
+	40: //Done -> Betrieb abgeschlossen
+		fbBlink(tPeriode:= T#1S , bBlink=> bBlinken);
+		bGreen := bBlinken;
+		
+	50: //Stop -> geplanter Stop
+		bYellow := TRUE;
+		
+	60: //Setup -> Wartung
+		bRed := TRUE;
+		bYellow := TRUE;
+		bGreen := TRUE;
+		
+	90://Error -> Fehlerbehafteter Stopp
+		fbBlink(tPeriode:= T#1S , bBlink=> bBlinken);
+		bYellow := bBlinken;
+		
+	99: //Warning -> Nicht Fehlerbehafteter Stopp
+		fbBlink(tPeriode:= T#1S , bBlink=> bBlinken);
+		bRed := bBlinken;
+	
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Ampel">
+      <LineId Id="38" Count="55" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

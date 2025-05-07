@@ -7,6 +7,8 @@ VAR
 	fbEZylinder1 : FB_EZylinder;
 	fbEZylinder2 : FB_EZylinder;
 	
+	fbAmpel : FB_Ampel;
+	eState: eBetriebszustand;
 	
 	MCPower : MC_Power;
 	
@@ -16,7 +18,10 @@ VAR
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[IFC_HW.ax_BandMotor.ReadStatus();
+      <ST><![CDATA[
+fbAmpel(eState:= eState, bRed=>IFC_HW.bAmpelRot , bYellow=>IFC_HW.bAmpelGelb , bGreen=>IFC_HW.bAmpelGrun );
+
+IFC_HW.ax_BandMotor.ReadStatus();
 
 MCPower(
 	Axis:= IFC_HW.ax_BandMotor, 
@@ -41,7 +46,7 @@ fbVereinzelung(
 	bSensor4:= IFC_HW.bBandSens1, 
 	bGate1=> fbEZylinder1.bGate, 
 	bGate2=> fbEZylinder2.bGate,
-	eState=> );
+	eState=> eState);
 	
 	
 fbEZylinder1(bGate:= , bError:= , bR1=> IFC_HW.bR1AKT1, bR2=> IFC_HW.bR2AKT1);
@@ -70,6 +75,8 @@ fbForderband(
 	ax:= IFC_HW.ax_BandMotor); *)]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
+      <LineId Id="165" Count="0" />
+      <LineId Id="162" Count="1" />
       <LineId Id="76" Count="0" />
       <LineId Id="101" Count="11" />
       <LineId Id="96" Count="0" />
